@@ -14,6 +14,6 @@ Este repositório faz parte do desafio final do Bootcamp da DIO: Deploy de Aplic
 ## ⚠️ Observação importante
 
 > Os arquivos de configuração do Kubernetes (`.yaml`) foram perdidos acidentalmente antes do commit final. Porém, todas as etapas foram concluídas e testadas localmente com sucesso.
-
+Depois foram restaurados e prontos para testes.
 ## Estrutura do repositório
 
