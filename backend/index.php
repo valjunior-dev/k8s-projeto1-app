@@ -1,20 +1,55 @@
-<?
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Headers: *");
+<?php
+header("Access-Control-Allow-Origin: *"); 
+header("Access-Control-Allow-Headers: Content-Type");
+header("Access-Control-Allow-Methods: POST, GET");
 
-include 'conexao.php';
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-$id =  rand(1, 999);
-$nome = $_POST["nome"];
-$email = $_POST["email"];
-$comentario = $_POST["comentario"];
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $nome = trim($_POST['nome'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+    $comentario = trim($_POST['comentario'] ?? '');
 
-$query = "INSERT INTO mensagens(id, nome, email, comentario) VALUES ('$id', '$nome', '$email', '$comentario')";
+    if ($comentario === '') {
+        http_response_code(400);
+        echo "Comentário é obrigatório.";
+        exit;
+    }
 
+    $servername = getenv('DB_HOST') ?: 'mysql';
+    $username   = getenv('DB_USER') ?: 'dio';
+    $password   = getenv('DB_PASS') ?: 'dio';
+    $database   = getenv('DB_NAME') ?: 'dio';
 
-if ($link->query($query) === TRUE) {
-  echo "New record created successfully";
+    $conn = new mysqli($servername, $username, $password, $database);
+
+    if ($conn->connect_error) {
+        http_response_code(500);
+        echo "Erro de conexão: " . $conn->connect_error;
+        exit;
+    }
+
+    $stmt = $conn->prepare("INSERT INTO comments (nome, email, comentario) VALUES (?, ?, ?)");
+    if (!$stmt) {
+        http_response_code(500);
+        echo "Erro na preparação da query: " . $conn->error;
+        exit;
+    }
+
+    $stmt->bind_param("sss", $nome, $email, $comentario);
+
+    if ($stmt->execute()) {
+        echo "Comentário enviado com sucesso!";
+    } else {
+        http_response_code(500);
+        echo "Erro ao salvar comentário: " . $stmt->error;
+    }
+
+    $stmt->close();
+    $conn->close();
+    exit;
+
 } else {
-  echo "Error: " . $link->error;
+    echo "Backend está ativo. Use POST para enviar comentários.";
 }
-?>

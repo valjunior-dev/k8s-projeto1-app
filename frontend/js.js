@@ -1,21 +1,26 @@
-$("#button-blue").on("click", function() {
-    
-    var txt_nome = $("#name").val();
-    var txt_email = $("#email").val();
-    var txt_comentario = $("#comment").val();
+document.addEventListener("DOMContentLoaded", function () {
+  const form = document.getElementById("contact");
 
-    $.ajax({
-        url: "",
-        
-        type: "post",
-        data: {nome: txt_nome, comentario: txt_comentario, email: txt_email},
-        beforeSend: function() {
-        
-            console.log("Tentando enviar os dados....");
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
 
+    const formData = new FormData(form);
+    const data = new URLSearchParams(formData);
+
+    try {
+      const response = await fetch("/backend/comentarios.php", {
+        method: "POST",
+        body: data,
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
         }
-    }).done(function(e) {
-        alert("Dados Salvos");
-    })
+      });
 
+      const result = await response.text();
+      alert(result);
+    } catch (error) {
+      alert("Erro ao enviar comentário.");
+      console.error(error);
+    }
+  });
 });

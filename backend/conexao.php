@@ -1,11 +1,8 @@
 <?php
-$servername = "";
-$username = "root";
-$password = "Senha123";
-$database = "meubanco";
-
-// Criar conexão
-
+$servername = getenv('DB_HOST') ?: 'mysql'; 
+$username   = getenv('DB_USER') ?: 'dio';
+$password   = getenv('DB_PASS') ?: 'dio';
+$database   = getenv('DB_NAME') ?: 'dio';
 
 $link = new mysqli($servername, $username, $password, $database);
 
